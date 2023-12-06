@@ -1,6 +1,7 @@
 const express =  require('express');
+const Joi = require('joi');
 const app = express();
-app.use(express('json'));
+app.use(express.json());
 const port = process.env.port || 5000
 const employees = [
     { IDemp : 1 ,  fullName : "bernou adem" , Departement :  "Finance" } ,
@@ -22,14 +23,21 @@ app.get('/api/employees/:name/:age' , (req , res)=> {
 });
 
 app.post('/api/employees' , (req , res) => {
-
+    const schema =  {
+        IDemp : Joi.number().integer().required(),
+        fullName : Joi.string().min(3).required() ,
+        Departement :  Joi.string().min(3).required() ,
+    }
+    const joiError =  Joi.validate(req.body , schema);
+    console.log(joiError);
+    
     const employee = {
         IDemp : req.body.IDemp ,
         fullName : req.body.fullName ,
         Departement : req.body.Departement
     }
     employees.push(employee);
-    res.send(employee);
+    res.json(employee);
 });
 
 app.listen(port  , ()=> {
