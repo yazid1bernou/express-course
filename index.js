@@ -22,22 +22,33 @@ app.get('/api/employees/:name/:age' , (req , res)=> {
     res.send(req.params)
 });
 
-app.post('/api/employees' , (req , res) => {
-    const schema =  {
+app.post('/api/test' , (req , res) => {
+     const schema =  Joi.object({
         IDemp : Joi.number().integer().required(),
         fullName : Joi.string().min(3).required() ,
         Departement :  Joi.string().min(3).required() ,
-    }
-    const joiError =  Joi.validate(req.body , schema);
-    console.log(joiError);
-    
+    })
+   
     const employee = {
         IDemp : req.body.IDemp ,
         fullName : req.body.fullName ,
         Departement : req.body.Departement
     }
-    employees.push(employee);
-    res.json(employee);
+
+   
+    const result =  schema.validate(employee);
+
+     if(result.error){
+        console.error(result.error.details);
+        res.send('Data is not valid ')
+    }
+    else {
+        console.log('data is valid')
+        employees.push(employee);
+        res.json(employee); 
+
+        res.send('Data is valid')
+        }
 });
 
 app.listen(port  , ()=> {
